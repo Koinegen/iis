@@ -1,11 +1,16 @@
-$(document).ready(function () {
-	$('#start').click(function () {
-		$.get("next", function(data){
-    		//$.innerHTML = $.parseHTML(data);
-			$("#displayMessage").html(data);
-    		//alert(data);
-		});
+$(document).ready(function() {
 
+	var toLoad = '/next';
+
+	$('#btn-click').click(function(){
+		$('#content').hide('fast',loadContent);
+
+		function loadContent() {
+			$('#content').load(toLoad,'',showNewContent)
+		}
+		function showNewContent() {
+			$('#content').show('fast');
+		}
 	});
 
 });

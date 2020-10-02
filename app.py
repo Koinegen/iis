@@ -9,7 +9,7 @@ def index():
 
 @app.route('/next')
 def next():
-    return render_template("next.html")
+    return render_template("next.html", css_styles=url_for('static', filename="style.css"), jquery_s=url_for('static', filename="js.js"))
 
 
 if __name__ == '__main__':
