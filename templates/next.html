@@ -19,15 +19,15 @@
 <body>
 <div class="jumbotron jumbotron-fluid">
     <div class="container">
-        <h1 class="display-4">Fluid jumbotron</h1>
-        <p class="lead">This is a modified jumbotron that occupies the entire horizontal space of its parent.</p>
+        <h1 class="display-4">{{ print_data }}</h1>
+        <p class="lead">{{ data }}</p>
     </div>
 </div>
 <!----------->
 <div class="btn-group" role="group" aria-label="Basic example" align="center">
-    <button type="button" class="btn btn-secondary">Да</button>
-    <button type="button" class="btn btn-secondary">Не знаю</button>
-    <button type="button" class="btn btn-secondary">Нет</button>
+    <button id="btn-yes" type="button" class="btn btn-secondary">Да</button>
+    <button id="btn-dont_know" type="button" class="btn btn-secondary">Не знаю</button>
+    <button id="btn-no" type="button" class="btn btn-secondary">Нет</button>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

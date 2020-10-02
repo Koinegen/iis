@@ -14,6 +14,42 @@ $(document).ready(function() {
 		})
 	});
 
+	$('#btn-yes').click(function (){
+		$.post(toLoad, 'yes', function(data){
+			$('#content').hide('fast', toHtml);
+			$('#content').show("fast");
+			function toHtml(){
+				$(this).html(data);
+			}
+			// $('#content').html(data);
+			// $('#content').show("fast");
+		})
+	});
+
+	$('#btn-dont_know').click(function (){
+		$.post(toLoad, 'dont_know', function(data){
+			$('#content').hide('fast', toHtml);
+			$('#content').show("fast");
+			function toHtml(){
+				$(this).html(data);
+			}
+			// $('#content').html(data);
+			// $('#content').show("fast");
+		})
+	});
+
+	$('#btn-no').click(function (){
+		$.post(toLoad, 'no', function(data){
+			$('#content').hide('fast', toHtml);
+			$('#content').show("fast");
+			function toHtml(){
+				$(this).html(data);
+			}
+			// $('#content').html(data);
+			// $('#content').show("fast");
+		})
+	});
+
 	// var toLoad = '/next';
 	//
 	// $('#btn-click').click(function(){
