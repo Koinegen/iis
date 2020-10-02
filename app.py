@@ -7,6 +7,7 @@ app = Flask(__name__)
 def index():
     return render_template("index.html", css_styles=url_for('static', filename="style.css"), jquery_s=url_for('static', filename="js.js"))
 
+
 @app.route('/next')
 def next():
     return render_template("next.html", css_styles=url_for('static', filename="style.css"), jquery_s=url_for('static', filename="js.js"))
