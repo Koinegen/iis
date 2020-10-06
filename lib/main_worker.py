@@ -1,4 +1,4 @@
-from lib.db_connector import DataBase
+from db_connector import DataBase
 import json
 import random
 import json
@@ -68,6 +68,7 @@ class TestSession:
     def _get_all_langs(self):
         ans = db.select_lan_rows()
         for lan in ans:
+            print(lan)
             self.languages.update({lan.get("lan_name"): json.loads(json.loads(lan.get("properties")))})
         print(self.languages)
 
@@ -75,9 +76,10 @@ class TestSession:
         query = """SELECT * FROM properties;"""
         ans = db.select_execute(query)
         for prop in ans:
+            print(prop)
             self.properties.update({prop.get('property'): {'if_true': prop.get('if_true'),
-                                                           'questions': json.loads(
-                                                               json.loads(prop.get('questions'))).get("quest")}})
+                                                           'questions':
+                                                               json.loads(prop.get('questions')).get("quest")}})
         self.properties_count = len(self.properties)
         print(self.properties)
 
@@ -94,13 +96,14 @@ class TestSession:
 
 
 if __name__ == '__main__':
-    db = DataBase('localhost', 'lab1', 'elephant', 'lab1_schema')
-    ans = get_random_property(db)
+    db = DataBase('localhost', 'lab1', 'elephant', 'lab1_new_schema')
+
+    #ans = get_random_property(db)
     # a = eval(json.loads(ans[0].get('questions')))
     # print(type(a))
 
     sess = TestSession(db, "123")
     a = sess.get_next_question()
     print(a)
-    a = sess.get_next_question()
-    print(a)
+    # a = sess.get_next_question()
+    # print(a)
