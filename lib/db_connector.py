@@ -35,7 +35,7 @@ AND properties.property = "{property}";"""
         query = f"""SELECT questions FROM lab1_schema.properties WHERE id={prop_id}"""
         with self.conn.cursor() as cursor:
             cursor.execute(query)
-            return [row for row in cursor.fetchall()]
+            return json.loads(cursor.fetchall()[0].get('questions'))
 
     def get_langs_by_list_of_properties(self, prop: list):
         __str_prop_list = [str(i) for i in prop]
@@ -53,6 +53,13 @@ AND properties.property = "{property}";"""
         with self.conn.cursor() as cursor:
             cursor.execute(query)
             return [row for row in cursor.fetchall()]
+
+    def insert_questions(self, prop, questions: list):
+        __questions = json.dumps({"questions": questions}, ensure_ascii=False)
+        query = f"""UPDATE lab1_schema.properties SET questions='{__questions}' WHERE property={prop}"""
+        with self.conn.cursor() as cursor:
+            cursor.execute(query)
+
 
     def select_lan_rows(self, lan=None):
         with self.conn.cursor() as cursor:
@@ -74,7 +81,10 @@ if __name__ == '__main__':
     #db.insert_language("java", "compile", "static_type", "high_level", "fast", "oop", "venv", "popular")
     # db.insert_language("python", "high_level", "popular", "web", "backend", "script", "oop")
 
-    print(db.get_langs_by_list_of_properties([4]))
+    #print(db.get_langs_by_list_of_properties([4]))
+    db.insert_questions("web", ["Хотите писать web???"])
+
+    print(db.get_question_by_property(4))
 
 
     # db.add_new_property("frontend", 2, 1, ["Хотите писать скрипты для frontend-а?"])

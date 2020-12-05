@@ -86,7 +86,7 @@ class TestSession:
         self.sorted_property_list = list(filter(lambda x: True if x[1] != [] else False, self.sorted_property_list))
         print(self.sorted_property_list)
         prop_id = self.sorted_property_list[0][1][random.randint(0, len(self.sorted_property_list[0][1]) - 1)]
-        questions = self.db.get_question_by_property(prop_id)#[0].get('questions')
+        questions = self.db.get_question_by_property(prop_id)#.get('questions')
         self.last_prop = prop_id
         self.used_prop.append(prop_id)
         print(questions)
