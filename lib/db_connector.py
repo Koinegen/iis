@@ -1,99 +1,57 @@
 import json
-
-import pymysql
-from pymysql.cursors import DictCursor
+import sqlite3
 
 
 class DataBase:
-    def __init__(self, host, user, password, schema):
-        self.conn = pymysql.connect(host=host, user=user, password=password, db=schema, charset='utf8mb4',
-                                    cursorclass=DictCursor)
+    def __init__(self, db_path):
+        self.conn = sqlite3.connect(db_path)
 
     def __del__(self):
         self.conn.commit()
         self.conn.close()
 
-
-    def insert_language(self, lan_name, *properties: str):
-        with self.conn.cursor() as cursor:
-            query1 = f"""INSERT IGNORE INTO languages(name)
-          VALUES ("{lan_name}");"""
-            cursor.execute(query1)
-            for property in properties:
-                query2 = f"""INSERT IGNORE INTO properties(property)
-            VALUES ("{property}");"""
-                cursor.execute(query2)
-
-                query3 = f"""REPLACE INTO lab1_schema.lan_to_prop(lan_id,prop_id) 
-SELECT languages.id, properties.id FROM lab1_schema.languages, lab1_schema.properties 
-WHERE languages.name = "{lan_name}" 
-AND properties.property = "{property}";"""
-
-                cursor.execute(query3)
-
     def get_question_by_property(self, prop_id):
-        query = f"""SELECT questions FROM lab1_schema.properties WHERE id={prop_id}"""
-        with self.conn.cursor() as cursor:
-            cursor.execute(query)
-            return json.loads(cursor.fetchall()[0].get('questions'))
+        query = f"""SELECT questions FROM properties WHERE id={prop_id}"""
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        return json.loads(cursor.fetchall()[0][0])
 
-    def get_langs_by_list_of_properties(self, prop: list):
+    def get_services_by_list_of_properties(self, prop: list):
         __str_prop_list = [str(i) for i in prop]
-        query = f"""select lan_id from (select lan_id, count(*) as n from lab1_schema.lan_to_prop where prop_id in ({','.join(__str_prop_list)}) group by lan_id) a where n={len(__str_prop_list)};"""
-        with self.conn.cursor() as cursor:
-            cursor.execute(query)
-            return [row for row in cursor.fetchall()]
+        query = f"""select ser_id from (select ser_id, count(*) as n from service_to_prop where prop_id in ({','.join(__str_prop_list)}) group by ser_id) a where n={len(__str_prop_list)};"""
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        return [row[0] for row in cursor.fetchall()]
 
-    def get_sorted_property(self, lan_list=None) -> list:
-        if lan_list is None:
-            query = """SELECT prop_id, count(*) as res FROM lab1_schema.lan_to_prop group by prop_id order by res desc;"""
+    def get_sorted_property(self, service_list=None) -> list:
+        if service_list is None:
+            query = """SELECT prop_id, count(*) as res FROM service_to_prop group by prop_id order by res desc;"""
         else:
-            __str_lan_list = [str(i) for i in lan_list]
-            query = f"""SELECT prop_id, count(*) as res from lab1_schema.lan_to_prop where lan_id in ({','.join(__str_lan_list)}) group by prop_id order by res desc;"""
-        with self.conn.cursor() as cursor:
-            cursor.execute(query)
-            return [row for row in cursor.fetchall()]
+            __str_service_list = [str(i) for i in service_list]
+            query = f"""SELECT prop_id, count(*) as res from service_to_prop where ser_id in ({','.join(__str_service_list)}) group by prop_id order by res desc;"""
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        return [row for row in cursor.fetchall()]
 
-    def insert_questions(self, prop, questions: list):
-        __questions = json.dumps({"questions": questions}, ensure_ascii=False)
-        query = f"""UPDATE lab1_schema.properties SET questions='{__questions}' WHERE property={prop}"""
-        with self.conn.cursor() as cursor:
-            cursor.execute(query)
-
-
-    def select_lan_rows(self, lan=None):
-        with self.conn.cursor() as cursor:
-            if lan is not None:
-                query = f"""SELECT * FROM languages WHERE lan_name='{lan}';"""
-            else:
-                query = """SELECT * FROM languages;"""
-            cursor.execute(query)
-            return [row for row in cursor.fetchall()]
-
-    def select_execute(self, string):
-        with self.conn.cursor() as cursor:
-            cursor.execute(string)
-            return [row for row in cursor.fetchall()]
+    # def select_lan_rows(self, lan=None):
+    #     with self.conn.cursor() as cursor:
+    #         if lan is not None:
+    #             query = f"""SELECT * FROM languages WHERE lan_name='{lan}';"""
+    #         else:
+    #             query = """SELECT * FROM languages;"""
+    #         cursor.execute(query)
+    #         return [row for row in cursor.fetchall()]
+    #
+    # def select_execute(self, string):
+    #     with self.conn.cursor() as cursor:
+    #         cursor.execute(string)
+    #         return [row for row in cursor.fetchall()]
 
 
 if __name__ == '__main__':
-    db = DataBase('localhost', 'lab1', 'elephant', 'lab1_schema')
-    #db.insert_language("java", "compile", "static_type", "high_level", "fast", "oop", "venv", "popular")
-    # db.insert_language("python", "high_level", "popular", "web", "backend", "script", "oop")
+    db = DataBase('..\data\katia_bd.db')
 
-    #print(db.get_langs_by_list_of_properties([4]))
-    db.insert_questions("web", ["Хотите писать web???"])
-
+    print(db.get_sorted_property())
+    print(db.get_sorted_property([4]))
+    print(db.get_services_by_list_of_properties([4]))
     print(db.get_question_by_property(4))
-
-
-    # db.add_new_property("frontend", 2, 1, ["Хотите писать скрипты для frontend-а?"])
-    # ans = db.select_lan_rows()
-    # print(ans)
-    # ans = db.console_execute("""SELECT * FROM languages;""")[0]
-    # print(ans)
-    # ans2 = dict(ans)
-    # print(ans2)
-    # print(ans[0].get('properties'))
-    # print(type(json.loads(ans[0].get('properties'))))
-    # print(json.dumps({'script':True,'oop':True}))
