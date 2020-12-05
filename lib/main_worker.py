@@ -1,7 +1,6 @@
 from db_connector import DataBase
 import json
 import random
-import json
 from collections import defaultdict
 
 
@@ -76,7 +75,7 @@ class TestSession:
         else:
             _result = self.db.get_sorted_property(self.answers)
         for _row in _result:
-            _temp_dict[_row['res']].append(_row['prop_id'])
+            _temp_dict[_row[1]].append(_row[0])
         self.sorted_property_list = list(_temp_dict.items())
 
     def get_question(self):
@@ -84,37 +83,17 @@ class TestSession:
         if self.last_prop is not None:
             self.__remove_property()
         self.sorted_property_list = list(filter(lambda x: True if x[1] != [] else False, self.sorted_property_list))
-        print(self.sorted_property_list)
         prop_id = self.sorted_property_list[0][1][random.randint(0, len(self.sorted_property_list[0][1]) - 1)]
-        questions = self.db.get_question_by_property(prop_id)#.get('questions')
+        questions = self.db.get_question_by_property(prop_id).get('questions')
         self.last_prop = prop_id
         self.used_prop.append(prop_id)
-        print(questions)
-        print(prop_id)
         return questions[random.randint(0, len(questions) - 1)]
 
 
 if __name__ == '__main__':
-    db = DataBase('localhost', 'lab1', 'elephant', 'lab1_schema')
-
-    #ans = get_random_property(db)
-    # a = eval(json.loads(ans[0].get('questions')))
-    # print(type(a))
+    db = DataBase("../data/katia_bd.db")
 
     sess = TestSession(db, "123")
     print(sess.get_question())
-    sess.accept_answer(1)
+    # sess.accept_answer(1)
     print(sess.get_question())
-    print(sess.get_question())
-    print(sess.get_question())
-    print(sess.get_question())
-    print(sess.get_question())
-    print(sess.get_question())
-    print(sess.get_question())
-    print(sess.get_question())
-
-
-    # a = sess.get_next_question()
-    # print(a)
-    # a = sess.get_next_question()
-    # print(a)
