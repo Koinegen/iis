@@ -60,20 +60,20 @@ AND properties.property = "{property}";"""
         with self.conn.cursor() as cursor:
             cursor.execute(query)
 
-
-    def select_lan_rows(self, lan=None):
+    def get_langs_count(self):
+        query = """SELECT count(*) as res from lab1_schema.languages;"""
         with self.conn.cursor() as cursor:
-            if lan is not None:
-                query = f"""SELECT * FROM languages WHERE lan_name='{lan}';"""
-            else:
-                query = """SELECT * FROM languages;"""
             cursor.execute(query)
-            return [row for row in cursor.fetchall()]
+            __result = cursor.fetchall()
+            return __result.get("res")
 
-    def select_execute(self, string):
+    def get_language_by_id(self, lan_id):
+        query = f"""SELECT name from lab1_schema.languages where id={lan_id};"""
         with self.conn.cursor() as cursor:
-            cursor.execute(string)
-            return [row for row in cursor.fetchall()]
+            cursor.execute(query)
+            __result = cursor.fetchall()
+            return __result.get("name")
+
 
 
 if __name__ == '__main__':
