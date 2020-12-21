@@ -2,6 +2,7 @@ import json
 
 import pymysql
 from pymysql.cursors import DictCursor
+import logging
 
 
 class DataBase:
@@ -34,6 +35,7 @@ AND properties.property = "{property}";"""
     def get_question_by_property(self, prop_id):
         query = f"""SELECT questions FROM lab1_schema.properties WHERE id={prop_id}"""
         with self.conn.cursor() as cursor:
+            print(query)
             cursor.execute(query)
             return json.loads(cursor.fetchall()[0].get('questions'))
 
@@ -41,6 +43,7 @@ AND properties.property = "{property}";"""
         __str_prop_list = [str(i) for i in prop]
         query = f"""select lan_id from (select lan_id, count(*) as n from lab1_schema.lan_to_prop where prop_id in ({','.join(__str_prop_list)}) group by lan_id) a where n={len(__str_prop_list)};"""
         with self.conn.cursor() as cursor:
+            print(query)
             cursor.execute(query)
             return [row for row in cursor.fetchall()]
 
@@ -51,6 +54,7 @@ AND properties.property = "{property}";"""
             __str_lan_list = [str(i) for i in lan_list]
             query = f"""SELECT prop_id, count(*) as res from lab1_schema.lan_to_prop where lan_id in ({','.join(__str_lan_list)}) group by prop_id order by res desc;"""
         with self.conn.cursor() as cursor:
+            print(query)
             cursor.execute(query)
             return [row for row in cursor.fetchall()]
 
@@ -58,21 +62,24 @@ AND properties.property = "{property}";"""
         __questions = json.dumps({"questions": questions}, ensure_ascii=False)
         query = f"""UPDATE lab1_schema.properties SET questions='{__questions}' WHERE property={prop}"""
         with self.conn.cursor() as cursor:
+            print(query)
             cursor.execute(query)
 
     def get_langs_count(self):
         query = """SELECT count(*) as res from lab1_schema.languages;"""
         with self.conn.cursor() as cursor:
+            print(query)
             cursor.execute(query)
             __result = cursor.fetchall()
-            return __result.get("res")
+            return __result[0].get("res")
 
     def get_language_by_id(self, lan_id):
         query = f"""SELECT name from lab1_schema.languages where id={lan_id};"""
         with self.conn.cursor() as cursor:
+            print(query)
             cursor.execute(query)
             __result = cursor.fetchall()
-            return __result.get("name")
+            return __result[0].get("name")
 
 
 

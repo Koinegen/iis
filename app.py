@@ -5,6 +5,7 @@ from lib.db_connector import DataBase
 app = Flask(__name__)
 db = DataBase('localhost', 'lab1', 'elephant', 'lab1_schema')
 test_session = []
+app.debug = True
 
 
 @app.route('/', methods=['GET'])
@@ -41,7 +42,7 @@ def next():
                                    jquery_s=url_for('static', filename="js.js"))
         __next_question = test_session[0].get_question()
         if not __next_question:
-            return render_template("result.html", data="Мы не смогли подобрать для вас сервис(", print_data="Вы завершили тест!",
+            return render_template("result.html", data="Мы не смогли подобрать для вас язык(", print_data="Вы завершили тест!",
                                    css_styles=url_for('static', filename="style.css"),
                                    jquery_s=url_for('static', filename="js.js"))
         return render_template("next.html", data="Выберите ответ:", print_data=__next_question,
