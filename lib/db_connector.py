@@ -17,6 +17,7 @@ class DataBase:
         cursor = self.conn.cursor()
         cursor.execute(query)
         resp = cursor.fetchall()
+        print(resp[0][0])
         return json.loads(str(resp[0][0]))
 
     def get_services_by_list_of_properties(self, prop: list):

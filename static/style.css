@@ -1,8 +1,0 @@
-div.card {
-   height: 10em;
-   position: center }
-div.card p {
-   margin: 0;
-   position: center;
-   top: 50%;
-   transform: translate(0, -50%) }

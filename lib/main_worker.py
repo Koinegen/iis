@@ -1,5 +1,4 @@
 from lib.db_connector import DataBase
-import json
 import random
 from collections import defaultdict
 
@@ -20,6 +19,8 @@ class TestSession:
 
     def check_results(self):
         # TODO: Подумать над этой функцией!!!!
+        if self.answers == []:
+            return False
         self.result = self.db.get_services_by_list_of_properties(self.answers)
         if len(self.result) == 1:
             __result_service = self.db.get_service_by_id(self.result[0])
@@ -37,17 +38,19 @@ class TestSession:
             return False
 
     def __remove_property(self):
+        __new_prop_list = []
         for i in self.sorted_property_list:
-            for j in self.used_prop:
-                if j in i[1]:
-                    i[1].remove(j)
+            __temp = [x for x in i[1] if x not in self.used_prop]
+            __new_prop_list.append((i[0], __temp))
+        self.sorted_property_list = __new_prop_list
 
     def __get_sorted_properties(self):
         _temp_dict = defaultdict(lambda: [])
         if self.answers == []:
             _result = self.db.get_sorted_property()
         else:
-            _result = self.db.get_sorted_property(self.answers)
+            __temp = self.result
+            _result = self.db.get_sorted_property(__temp)
         for _row in _result:
             _temp_dict[_row[1]].append(_row[0])
         self.sorted_property_list = list(_temp_dict.items())
